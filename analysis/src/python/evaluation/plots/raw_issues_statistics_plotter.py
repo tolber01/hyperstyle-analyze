@@ -15,7 +15,8 @@ from analysis.src.python.evaluation.plots.common.utils import (
     save_plot,
 )
 from analysis.src.python.evaluation.plots.plotters.raw_issues_statistics_plotters import PlotConfig, PlotTypes
-from analysis.src.python.evaluation.common.util import AnalysisExtension, parse_yaml
+from analysis.src.python.evaluation.common.extensions_util import AnalysisExtension
+from analysis.src.python.evaluation.common.yaml_util import parse_yaml
 
 
 @unique
@@ -73,10 +74,10 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
 
 
 def _get_plot_config(
-    column_name: str,
-    plot_type: str,
-    plot_config: Optional[Dict],
-    common: Optional[Dict],
+        column_name: str,
+        plot_type: str,
+        plot_config: Optional[Dict],
+        common: Optional[Dict],
 ) -> PlotConfig:
     params = {'column': column_name, 'type': PlotTypes(plot_type.lower())}
 

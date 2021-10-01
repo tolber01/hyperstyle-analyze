@@ -5,9 +5,10 @@ from pathlib import Path
 from typing import Dict, List
 
 import pandas as pd
-from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv
+from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv, ColumnName
 from analysis.src.python.evaluation.common.pandas_util import get_solutions_df_by_file_path
-from analysis.src.python.evaluation.common.util import AnalysisExtension, ColumnName, get_parent_folder
+from analysis.src.python.evaluation.common.extensions_util import AnalysisExtension
+from analysis.src.python.evaluation.common.file_util import get_parent_folder
 from analysis.src.python.evaluation.qodana.util.models import QodanaColumnName, QodanaIssue
 from analysis.src.python.evaluation.qodana.util.util import (
     configure_model_converter_arguments, get_inspections_dict, replace_inspections_on_its_ids,

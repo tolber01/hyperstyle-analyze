@@ -9,15 +9,16 @@ from collections import defaultdict
 from math import ceil
 from pathlib import Path
 from typing import Dict, List, Optional
+
 sys.path.append('')
 
 import numpy as np
 import pandas as pd
-from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv
-from analysis.src.python.evaluation.common.util import (
-    ColumnName, copy_directory, copy_file, create_file, get_name_from_path,
-    get_parent_folder, match_condition, remove_directory, run_and_wait,
-)
+from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv, ColumnName
+from analysis.src.python.evaluation.common.extensions_util import match_condition
+from analysis.src.python.evaluation.common.subprocess_util import run_and_wait
+from analysis.src.python.evaluation.common.file_util import create_file, get_name_from_path, copy_file, copy_directory, \
+    get_parent_folder, remove_directory
 from analysis.src.python.evaluation.qodana.util.models import QodanaColumnName, QodanaIssue
 from analysis.src.python.evaluation.qodana.util.util import to_json
 from src.python.review.application_config import LanguageVersion

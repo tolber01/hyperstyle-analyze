@@ -7,14 +7,13 @@ import numpy as np
 import pandas as pd
 from src.python.review.inspectors.issue import IssueType
 from src.python.review.quality.penalty import PenaltyIssue
-from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv
+from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv, ColumnName
 from analysis.src.python.evaluation.common.pandas_util import (
     filter_df_by_single_value, get_issues_from_json, get_solutions_df, logger,
 )
-from analysis.src.python.evaluation.common.tool_arguments import EvaluationRunToolArgument
-from analysis.src.python.evaluation.common.util import (
-    AnalysisExtension, ColumnName, get_parent_folder, get_restricted_extension,
-)
+from analysis.src.python.evaluation.common.tool_arguments_util import EvaluationRunToolArgument
+from analysis.src.python.evaluation.common.extensions_util import AnalysisExtension, get_restricted_extension
+from analysis.src.python.evaluation.common.file_util import get_parent_folder
 from analysis.src.python.evaluation.paper_evaluation.user_dynamics.user_statistics import DynamicsColumn
 
 

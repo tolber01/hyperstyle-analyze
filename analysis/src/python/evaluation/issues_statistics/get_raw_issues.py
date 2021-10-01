@@ -13,11 +13,11 @@ import pandas as pd
 from pandarallel import pandarallel
 from src.python.common.tool_arguments import RunToolArgument
 from analysis.src.python.evaluation.common.pandas_util import get_solutions_df_by_file_path, write_df_to_file
-from analysis.src.python.evaluation.common.util import (
-    AnalysisExtension, ColumnName, create_file, get_name_from_path, get_parent_folder,
-)
+from analysis.src.python.evaluation.common.extensions_util import AnalysisExtension
+from analysis.src.python.evaluation.common.csv_util import ColumnName
+from analysis.src.python.evaluation.common.file_util import create_file, get_name_from_path, get_parent_folder
 from analysis.src.python.evaluation.issues_statistics.common.raw_issue_encoder_decoder import RawIssueEncoder
-from analysis.src.python.evaluation.common.tool_arguments import EvaluationRunToolArgument
+from analysis.src.python.evaluation.common.tool_arguments_util import EvaluationRunToolArgument
 from src.python.review.application_config import LanguageVersion
 from src.python.review.common.file_system import Extension
 from src.python.review.common.language import Language

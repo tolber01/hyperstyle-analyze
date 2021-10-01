@@ -5,8 +5,8 @@ from pathlib import Path
 import pandas as pd
 from src.python.review.common.file_system import Extension
 from sklearn.model_selection import train_test_split
-from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv
-from analysis.src.python.evaluation.common.util import AnalysisExtension, ColumnName
+from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv, ColumnName
+from analysis.src.python.evaluation.common.extensions_util import AnalysisExtension
 from analysis.src.python.evaluation.qodana.imitation_model.common.util import SeedArgument
 
 

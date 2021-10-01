@@ -8,8 +8,8 @@ from typing import List
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MultiLabelBinarizer
-from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv
-from analysis.src.python.evaluation.common.util import AnalysisExtension, ColumnName
+from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv, ColumnName
+from analysis.src.python.evaluation.common.extensions_util import AnalysisExtension
 from analysis.src.python.evaluation.qodana.imitation_model.common.util import CustomTokens, DatasetColumnArgument
 
 logger = logging.getLogger(__name__)
@@ -82,6 +82,7 @@ class Context:
         If there are no lines before or / and after a piece of code,
         special tokens are added.
     """
+
     def __init__(self, df: pd.DataFrame, n_lines: int):
         self.indices = df[DatasetColumnArgument.ID.value].to_numpy()
         self.lines = df[ColumnName.CODE.value]

@@ -1,3 +1,4 @@
+from enum import unique, Enum
 from pathlib import Path
 from typing import Union
 
@@ -11,3 +12,23 @@ def write_dataframe_to_csv(csv_file_path: Union[str, Path], df: pd.DataFrame) ->
         df.to_csv(csv_file_path, encoding=Encoding.ISO_ENCODING.value, index=False)
     except UnicodeEncodeError:
         df.to_csv(csv_file_path, encoding=Encoding.UTF_ENCODING.value, index=False)
+
+
+@unique
+class ColumnName(Enum):
+    CODE = 'code'
+    LANG = 'lang'
+    LANGUAGE = 'language'
+    GRADE = 'grade'
+    ID = 'id'
+    COLUMN = 'column'
+    ROW = 'row'
+    OLD = 'old'
+    NEW = 'new'
+    IS_PUBLIC = 'is_public'
+    DECREASED_GRADE = 'decreased_grade'
+    PENALTY = 'penalty'
+    USER = 'user'
+    HISTORY = 'history'
+    TIME = 'time'
+    TRACEBACK = 'traceback'

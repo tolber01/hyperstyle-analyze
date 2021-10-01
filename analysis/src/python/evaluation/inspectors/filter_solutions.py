@@ -10,8 +10,9 @@ from analysis.src.python.evaluation.common.pandas_util import (
     get_solutions_df,
     write_df_to_file,
 )
-from analysis.src.python.evaluation.common.tool_arguments import EvaluationRunToolArgument
-from analysis.src.python.evaluation.common.util import AnalysisExtension, get_parent_folder, get_restricted_extension
+from analysis.src.python.evaluation.common.tool_arguments_util import EvaluationRunToolArgument
+from analysis.src.python.evaluation.common.extensions_util import AnalysisExtension, get_restricted_extension
+from analysis.src.python.evaluation.common.file_util import get_parent_folder
 
 logger = logging.getLogger(__name__)
 

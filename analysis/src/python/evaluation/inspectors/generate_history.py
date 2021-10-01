@@ -11,10 +11,10 @@ from analysis.src.python.evaluation.common.pandas_util import (
     get_solutions_df_by_file_path,
     write_df_to_file,
 )
-from analysis.src.python.evaluation.common.tool_arguments import EvaluationRunToolArgument
-from analysis.src.python.evaluation.common.util import (
-    AnalysisExtension, ColumnName, EvaluationArgument, get_name_from_path, get_parent_folder, get_restricted_extension,
-)
+from analysis.src.python.evaluation.common.tool_arguments_util import EvaluationRunToolArgument, EvaluationArgument
+from analysis.src.python.evaluation.common.extensions_util import AnalysisExtension, get_restricted_extension
+from analysis.src.python.evaluation.common.csv_util import ColumnName
+from analysis.src.python.evaluation.common.file_util import get_name_from_path, get_parent_folder
 from analysis.src.python.evaluation.evaluation_run_tool import get_language_version
 
 TRACEBACK = EvaluationArgument.TRACEBACK.value
@@ -67,7 +67,7 @@ def _add_history(row, solutions_df: pd.DataFrame) -> str:
 
     filtered_df = solutions_df[
         (solutions_df[USER] == row[USER]) & (solutions_df[LANG] == row[LANG]) & (solutions_df[TIME] < row[TIME])
-    ]
+        ]
     filtered_df.apply(lambda row: _update_counter(row[EXTRACTED_ISSUES], counter), axis=1)
 
     history = {}

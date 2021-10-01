@@ -9,8 +9,8 @@ from src.python.review.application_config import LanguageVersion
 from src.python.review.common.file_system import Extension
 from src.python.review.quality.penalty import PenaltyIssue
 from src.python.review.reviewers.utils.print_review import convert_json_to_issues
-from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv
-from analysis.src.python.evaluation.common.util import AnalysisExtension, ColumnName, get_restricted_extension
+from analysis.src.python.evaluation.common.csv_util import write_dataframe_to_csv, ColumnName
+from analysis.src.python.evaluation.common.extensions_util import AnalysisExtension, get_restricted_extension
 from analysis.src.python.evaluation.common.xlsx_util import create_workbook, remove_sheet, write_dataframe_to_xlsx_sheet
 
 logger = logging.getLogger(__name__)

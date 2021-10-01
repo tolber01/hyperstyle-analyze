@@ -14,10 +14,11 @@ import pandas as pd
 from pandarallel import pandarallel
 from analysis import HYPERSTYLE_RUNNER_PATH
 from analysis.src.python.evaluation.common.pandas_util import get_solutions_df, write_df_to_file
-from analysis.src.python.evaluation.common.util import (
-    ColumnName, create_file, EvaluationArgument, run_in_subprocess_with_working_dir, script_structure_rule,
-)
-from analysis.src.python.evaluation.common.tool_arguments import EvaluationRunToolArgument
+from analysis.src.python.evaluation.common.subprocess_util import run_in_subprocess_with_working_dir
+from analysis.src.python.evaluation.common.csv_util import ColumnName
+from analysis.src.python.evaluation.common.xlsx_util import script_structure_rule
+from analysis.src.python.evaluation.common.file_util import create_file
+from analysis.src.python.evaluation.common.tool_arguments_util import EvaluationRunToolArgument, EvaluationArgument
 from analysis.src.python.evaluation.evaluation_config import EvaluationConfig
 from src.python.common.tool_arguments import RunToolArgument
 from src.python.review.application_config import LanguageVersion

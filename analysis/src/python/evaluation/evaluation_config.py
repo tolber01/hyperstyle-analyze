@@ -6,9 +6,9 @@ from typing import List, Optional, Union
 
 from src.python.common.tool_arguments import RunToolArgument
 from src.python.review.application_config import LanguageVersion
-from analysis.src.python.evaluation.common.util import (
-    AnalysisExtension, EvaluationArgument, get_parent_folder, get_restricted_extension,
-)
+from analysis.src.python.evaluation.common.extensions_util import AnalysisExtension, get_restricted_extension
+from analysis.src.python.evaluation.common.tool_arguments_util import EvaluationArgument
+from analysis.src.python.evaluation.common.file_util import get_parent_folder
 
 logger = logging.getLogger(__name__)
 
