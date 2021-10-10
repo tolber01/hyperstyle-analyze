@@ -20,7 +20,9 @@ from src.python.review.quality.rules.code_style_scoring import CodeStyleRule
 from src.python.review.quality.rules.line_len_scoring import LineLengthRule
 from src.python.review.reviewers.utils.code_statistics import get_code_style_lines
 from analysis.src.python.evaluation.common.pandas_util import get_solutions_df_by_file_path, write_df_to_file
-from analysis.src.python.evaluation.common.util import ColumnName, get_parent_folder
+from analysis.src.python.evaluation.common.extensions_util import AnalysisExtension
+from analysis.src.python.evaluation.common.csv_util import ColumnName
+from analysis.src.python.evaluation.common.file_util import get_parent_folder
 from analysis.src.python.evaluation.issues_statistics.common.raw_issue_encoder_decoder import RawIssueDecoder
 from analysis.src.python.evaluation.issues_statistics.get_raw_issues import RAW_ISSUES
 
@@ -192,7 +194,7 @@ def _get_output_folder(solutions_file_path: Path, output_folder: Optional[Path])
 
 def _save_stats(stats_by_lang: Dict[str, pd.DataFrame], solutions_file_path: Path, output_path: Optional[Path]) -> None:
     output_folder = _get_output_folder(solutions_file_path, output_path)
-    output_extension = Extension.get_extension_from_file(str(solutions_file_path))
+    output_extension = AnalysisExtension.get_extension_from_file(str(solutions_file_path))
 
     logger.info(f'Saving statistics to a folder: {output_folder}.')
 

@@ -13,9 +13,10 @@ class CsvWriter:
         self.csv_path = os.path.join(result_dir, csv_file)
         self.fieldnames = fieldnames
 
-        with open(self.csv_path, 'w+', newline='') as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
+        if not os.path.exists(self.csv_path):
+            with open(self.csv_path, 'a+', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
 
     def write_csv(self, data: dict):
         with open(self.csv_path, 'a+', newline='', encoding='utf8') as f:

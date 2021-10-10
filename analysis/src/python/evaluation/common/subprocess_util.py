@@ -15,6 +15,6 @@ def run_in_subprocess_with_working_dir(command: List[str], working_dir: str) -> 
     return stdout
 
 
-def run_and_wait(command: List[str]) -> None:
-    process = subprocess.Popen(command)
+def run_and_wait(command: List[str], stdout=None, stderr=None, cwd=None) -> None:
+    process = subprocess.Popen(command, stdout=stdout, stderr=stderr, cwd=cwd)
     process.wait()
