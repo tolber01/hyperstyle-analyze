@@ -222,8 +222,9 @@ class DatasetLabel:
     @staticmethod
     def _copy_template(project_dir: Path, language: LanguageVersion) -> None:
         if language.is_java():
-            java_template = TEMPLATE_FOLDER / "java"
-            copy_directory(java_template, project_dir)
+            copy_directory(TEMPLATE_FOLDER / "java", project_dir)
+        elif language == LanguageVersion.PYTHON_3:
+            copy_directory(TEMPLATE_FOLDER / "python", project_dir)
         else:
             raise NotImplementedError(f'{language} needs implementation.')
 
@@ -235,6 +236,16 @@ class DatasetLabel:
                 lambda row: next(
                     create_file(
                         file_path=(working_dir / f'solution{row[ColumnName.ID.value]}' / f'Main{Extension.JAVA.value}'),
+                        content=row[ColumnName.CODE.value],
+                    ),
+                ),
+                axis=1,
+            )
+        elif language == LanguageVersion.PYTHON_3:
+            chunk.apply(
+                lambda row: next(
+                    create_file(
+                        file_path=(project_dir / f'solution{row[ColumnName.ID.value]}' / f'main{Extension.PY.value}'),
                         content=row[ColumnName.CODE.value],
                     ),
                 ),
