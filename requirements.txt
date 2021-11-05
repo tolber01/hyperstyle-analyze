@@ -3,6 +3,6 @@ plotly==4.14.3
 flake8==3.9.0
 
 requests==2.25.1
-dacite~=1.6.0
+dacite==1.6.0
 setuptools==56.0.0
-serde~=0.8.1
+serde==0.8.1
