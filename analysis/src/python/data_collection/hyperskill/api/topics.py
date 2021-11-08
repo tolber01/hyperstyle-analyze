@@ -20,7 +20,6 @@ class Topic(Object):
     hierarchy: List[int]
     prerequisites: List[int]
     progress_id: str
-    depth: int
     root_id: int
     root_title: str
     title: str
