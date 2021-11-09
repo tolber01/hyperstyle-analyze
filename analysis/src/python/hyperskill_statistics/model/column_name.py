@@ -36,28 +36,38 @@ class TopicColumns(str, Enum):
 
 class SubmissionColumns(str, Enum):
     ID = 'id'
-    USER = 'user'
+    USER_ID = 'user_id'
     CLIENT = 'client'
-    STEP = 'step'
+    STEP_ID = 'step_id'
     CODE = 'code'
     LANG = 'lang'
     TIME = 'time'
-
+    CODE_STYLE = 'code_style'
+    # issues
     RAW_ISSUES = 'raw_issues'
+    RAW_ISSUE_CLASS = 'origin_class'
+    RAW_ISSUE_TYPE = 'type'
     QODANA_ISSUES = 'qodana_issues'
+    QODANA_ISSUE_CLASS = 'problem_id'
+    QODANA_ISSUE_TYPE = 'type'
+
+
+class IssuesColumns(str, Enum):
+    CLASS = 'class'
+    TYPE = 'type'
 
 
 class UserColumns(str, Enum):
     ID = 'id'
     COMMENTS = 'comments_posted'
     GAMIFICATION = 'gamification'
-
+    # gamification
     ACTIVE_DAYS = 'active_days'
     DAILY_STEP_COMPLETED_COUNT = 'daily_step_completed_count'
     PASSED_PROBLEMS = 'passed_problems'
     PASSED_PROJECTS = 'passed_projects'
     PASSED_TOPICS = 'passed_topics'
-
+    # comments
     COMMENT = 'comment'
     HINT = 'hint'
     USEFUL_LINK = 'useful_link'
