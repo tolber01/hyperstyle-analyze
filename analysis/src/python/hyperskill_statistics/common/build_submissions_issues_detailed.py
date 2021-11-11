@@ -1,4 +1,5 @@
-from typing import List, Tuple
+import ast
+from typing import List
 
 import pandas as pd
 from pandarallel import pandarallel
@@ -40,62 +41,57 @@ def get_issues_types(submissions_with_issues_path='../data/java/submissions_with
     }), qodana_issues_path)
 
 
-def build_issues_series(submission_series: pd.DataFrame,
+def build_issues_series(submission_series: pd.Series,
                         raw_issues_classes: List[str],
-                        qodana_issues_classes: List[str]) -> Tuple[pd.Series, pd.Series]:
-    first = submission_series.iloc[0]
+                        qodana_issues_classes: List[str]) -> pd.Series:
     issues_series = {
-        SubmissionColumns.USER_ID: first[SubmissionColumns.USER_ID],
-        SubmissionColumns.STEP_ID: first[SubmissionColumns.STEP_ID],
-        SubmissionColumns.LANG: first[SubmissionColumns.LANG],
-        SubmissionColumns.CLIENT: submission_series[SubmissionColumns.CLIENT].values,
-        SubmissionColumns.TIME: submission_series[SubmissionColumns.TIME].values,
-        SubmissionColumns.CODE: submission_series[SubmissionColumns.CODE].values,
+        SubmissionColumns.USER_ID: submission_series[SubmissionColumns.USER_ID],
+        SubmissionColumns.STEP_ID: submission_series[SubmissionColumns.STEP_ID],
+        SubmissionColumns.LANG: submission_series[SubmissionColumns.LANG],
+        SubmissionColumns.CLIENT: submission_series[SubmissionColumns.CLIENT],
+        SubmissionColumns.TIME: submission_series[SubmissionColumns.TIME],
+        SubmissionColumns.CODE: submission_series[SubmissionColumns.CODE],
     }
 
-    raw_issues_series = issues_series.copy()
     for raw_issue_class in raw_issues_classes:
-        raw_issues_series[raw_issue_class] = []
+        issues_series[raw_issue_class] = []
 
-    for i, raw_issues in enumerate(submission_series[SubmissionColumns.RAW_ISSUES]):
+    for i, raw_issues in enumerate(ast.literal_eval(submission_series[SubmissionColumns.RAW_ISSUES])):
 
         for raw_issue_class in raw_issues_classes:
-            raw_issues_series[raw_issue_class].append(0)
+            issues_series[raw_issue_class].append(0)
 
         for raw_issue in str_to_dict(raw_issues):
-            raw_issues_series[raw_issue[SubmissionColumns.RAW_ISSUE_CLASS]][i] += 1
+            issues_series[raw_issue[SubmissionColumns.RAW_ISSUE_CLASS]][i] += 1
 
-    qodana_issues_series = issues_series.copy()
     for qodana_issue_class in qodana_issues_classes:
-        qodana_issues_series[qodana_issue_class] = []
+        issues_series[qodana_issue_class] = []
 
-    for i, qodana_issues in enumerate(submission_series[SubmissionColumns.QODANA_ISSUES]):
+    for i, qodana_issues in enumerate(ast.literal_eval(submission_series[SubmissionColumns.QODANA_ISSUES])):
 
         for qodana_issue_class in qodana_issues_classes:
-            qodana_issues_series[qodana_issue_class].append(0)
+            issues_series[qodana_issue_class].append(0)
 
         for qodana_issue in str_to_dict(qodana_issues):
-            qodana_issues_series[qodana_issue[SubmissionColumns.QODANA_ISSUE_CLASS]][i] += 1
+            issues_series[qodana_issue[SubmissionColumns.QODANA_ISSUE_CLASS]][i] += 1
 
-    return pd.Series(raw_issues_series), pd.Series(qodana_issues_series)
+    return pd.Series(issues_series)
 
 
 def get_solutions_with_issues_detailed(
         submissions_with_issues_path: str = '../data/java/submissions_series_java11.csv',
         raw_issues_path='../data/java/raw_issues.csv',
         qodana_issues_path='../data/java/qodana_issues.csv',
-        submissions_with_raw_issues_path_detailed: str = '../data/java/submissions_series_raw_issues_java11.csv',
-        submissions_with_qodana_issues_path_detailed: str = '../data/java/submissions_series_qodana_issues_java11.csv'):
-    pandarallel.initialize(nb_workers=4, progress_bar=True)
+        submissions_issues_path_detailed: str = '../data/java/submissions_series_detailed_java11.csv'):
+    pandarallel.initialize(progress_bar=True)
     df_submissions_series = read_df(submissions_with_issues_path)
 
     raw_issues_list = read_df(raw_issues_path)[IssuesColumns.CLASS].values
     qodana_issues_list = read_df(qodana_issues_path)[IssuesColumns.CLASS].values
 
-    df_raw_issues_series, df_qodana_issues_series = \
-        df_submissions_series.parallel_apply(lambda g: build_issues_series(g, raw_issues_list, qodana_issues_list))
-    write_df(df_raw_issues_series, submissions_with_raw_issues_path_detailed)
-    write_df(df_qodana_issues_series, submissions_with_qodana_issues_path_detailed)
+    issues_series = df_submissions_series \
+        .parallel_apply(lambda g: build_issues_series(g, raw_issues_list, qodana_issues_list), axis=1)
+    write_df(issues_series, submissions_issues_path_detailed)
 
 
 if __name__ == '__main__':
