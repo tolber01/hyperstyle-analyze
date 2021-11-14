@@ -1,3 +1,6 @@
+import sys
+
+import argparse
 import pandas as pd
 
 from analysis.src.python.hyperskill_statistics.common.df_utils import write_df
@@ -42,8 +45,7 @@ def preprocess_solutions(group: pd.DataFrame) -> pd.DataFrame:
     return group
 
 
-def build_submissions_series(submissions_path: str = '../data/java/submissions_with_issues_java11.csv',
-                             output_path: str = '../data/java/prep_submissions_series_java11.csv'):
+def build_submissions_series(submissions_path: str, output_path: str):
     df_submissions = pd.read_csv(submissions_path)
     df_submission_series = df_submissions.groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID],
                                                   as_index=False)
@@ -56,4 +58,10 @@ def build_submissions_series(submissions_path: str = '../data/java/submissions_w
 
 
 if __name__ == '__main__':
-    build_submissions_series()
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--submissions-path', '-sp', type=str, help='path to submissions', required=True)
+    parser.add_argument('--submissions-series-path', '-sp', type=str, help='path to submissions series', required=True)
+
+    args = parser.parse_args(sys.argv[1:])
+    build_submissions_series(args.submissions_path, args.submissions_series_path)
