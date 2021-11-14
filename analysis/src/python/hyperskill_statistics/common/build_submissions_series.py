@@ -9,6 +9,11 @@ def delete_resubmissions(group: pd.DataFrame) -> pd.DataFrame:
     i = group.shape[0] - 1
     while i > 0:
         if group.iloc[i][SubmissionColumns.CODE] == group.iloc[i - 1][SubmissionColumns.CODE]:
+            print(f'drop submission '
+                  f'user={group.iloc[i][SubmissionColumns.USER_ID]} '
+                  f'step={group.iloc[i][SubmissionColumns.STEP_ID]} '
+                  f'attempt={i}: '
+                  f'same code')
             i -= 1
         else:
             break
@@ -22,6 +27,11 @@ def delete_strange_submissions(group: pd.DataFrame, coef: float = 5.0) -> pd.Dat
         if 1 / coef <= c <= coef:
             i += 1
         else:
+            print(f'drop submission: '
+                  f'user={group.iloc[i][SubmissionColumns.USER_ID]} '
+                  f'step={group.iloc[i][SubmissionColumns.STEP_ID]} '
+                  f'attempt={i}: '
+                  f'number of lines diff coef = {c}')
             group.drop(group.iloc[i].name, inplace=True, axis=0)
     return group
 
@@ -34,14 +44,15 @@ def preprocess_solutions(group: pd.DataFrame) -> pd.DataFrame:
 
 
 def build_submissions_series(submissions_path: str = '../data/java/submissions_with_issues_java11.csv',
-                             output_path: str = '../data/java/submissions_series_java11.csv'):
+                             output_path: str = '../data/java/prep_submissions_series_java11.csv'):
     df_submissions = pd.read_csv(submissions_path)
     pandarallel.initialize(nb_workers=4, progress_bar=True)
 
+    df_submissions = df_submissions[df_submissions[SubmissionColumns.USER_ID] == 9]
     df_submission_series = df_submissions.groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID],
                                                   as_index=False)
     print('finish grouping')
-    df_submission_series = df_submission_series.parallel_apply(lambda g: preprocess_solutions(g))
+    df_submission_series = df_submission_series.apply(lambda g: preprocess_solutions(g))
     print('finish processing')
     df_submission_series = df_submission_series.agg(list)
     print('finish aggregation')
