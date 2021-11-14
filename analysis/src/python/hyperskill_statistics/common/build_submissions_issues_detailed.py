@@ -2,7 +2,6 @@ import ast
 from typing import List
 
 import pandas as pd
-from pandarallel import pandarallel
 
 from analysis.src.python.hyperskill_statistics.common.df_utils import read_df, write_df
 from analysis.src.python.hyperskill_statistics.common.utils import str_to_dict
@@ -63,13 +62,10 @@ def get_solutions_with_issues_detailed(
         submissions_with_issues_path: str = '../data/java/submissions_series_java11.csv',
         issues_path='../data/java/type_issues.csv',
         submissions_issues_path_detailed: str = '../data/java/type_issues_series_java11.csv'):
-
-    pandarallel.initialize(progress_bar=True)
     df_submissions_series = read_df(submissions_with_issues_path)
     issues_list = read_df(issues_path)[IssuesColumns.CLASS].values
-    issues_series = df_submissions_series.parallel_apply(
-        lambda g: build_issues_series(g, issue_column_name, issue_class_column_name, issues_list),
-        axis=1)
+    issues_series = df_submissions_series.apply(
+        lambda g: build_issues_series(g, issue_column_name, issue_class_column_name, issues_list), axis=1)
     write_df(issues_series, submissions_issues_path_detailed)
 
 

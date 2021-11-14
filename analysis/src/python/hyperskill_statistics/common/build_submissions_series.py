@@ -1,5 +1,4 @@
 import pandas as pd
-from pandarallel import pandarallel
 
 from analysis.src.python.hyperskill_statistics.common.df_utils import write_df
 from analysis.src.python.hyperskill_statistics.model.column_name import SubmissionColumns
@@ -46,9 +45,6 @@ def preprocess_solutions(group: pd.DataFrame) -> pd.DataFrame:
 def build_submissions_series(submissions_path: str = '../data/java/submissions_with_issues_java11.csv',
                              output_path: str = '../data/java/prep_submissions_series_java11.csv'):
     df_submissions = pd.read_csv(submissions_path)
-    pandarallel.initialize(nb_workers=4, progress_bar=True)
-
-    df_submissions = df_submissions[df_submissions[SubmissionColumns.USER_ID] == 9]
     df_submission_series = df_submissions.groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID],
                                                   as_index=False)
     print('finish grouping')
