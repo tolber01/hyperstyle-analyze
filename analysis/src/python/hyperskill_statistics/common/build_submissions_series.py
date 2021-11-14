@@ -61,7 +61,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--submissions-path', '-sp', type=str, help='path to submissions', required=True)
-    parser.add_argument('--submissions-series-path', '-sp', type=str, help='path to submissions series', required=True)
+    parser.add_argument('--submissions-series-path', '-ssp', type=str, help='path to submissions series', required=True)
 
     args = parser.parse_args(sys.argv[1:])
     build_submissions_series(args.submissions_path, args.submissions_series_path)
