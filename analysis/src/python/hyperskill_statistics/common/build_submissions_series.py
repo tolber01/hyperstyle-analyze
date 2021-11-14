@@ -41,7 +41,7 @@ def build_submissions_series(submissions_path: str = '../data/java/submissions_w
     df_submission_series = df_submissions.groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID],
                                                   as_index=False)
     print('finish grouping')
-    df_submission_series = df_submission_series[:3].apply(lambda g: preprocess_solutions(g))
+    df_submission_series = df_submission_series.parallel_apply(lambda g: preprocess_solutions(g))
     print('finish processing')
     df_submission_series = df_submission_series.agg(list)
     print('finish aggregation')
