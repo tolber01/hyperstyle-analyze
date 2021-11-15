@@ -1,5 +1,6 @@
 import argparse
 import ast
+import logging
 import sys
 from typing import List
 
@@ -10,22 +11,20 @@ from analysis.src.python.hyperskill_statistics.common.utils import str_to_dict
 from analysis.src.python.hyperskill_statistics.model.column_name import IssuesColumns, SubmissionColumns
 
 
-def get_raw_issues(raw_issues, raw_issues_types):
-    for raw_issue in str_to_dict(raw_issues):
-        raw_issues_types[raw_issue[SubmissionColumns.RAW_ISSUE_CLASS]] = raw_issue[SubmissionColumns.RAW_ISSUE_TYPE]
+def get_issues(issues, issue_class_column_name: str, issue_type_column_name: str, issues_types):
+    for issue in str_to_dict(issues):
+        issues_types[issue[issue_type_column_name]] = issue.get(issue_class_column_name, '')
 
 
-def get_qodana_issues(qodana_issues, qodana_issues_types):
-    for qodana_issue in str_to_dict(qodana_issues):
-        qodana_issues_types[qodana_issue[SubmissionColumns.QODANA_ISSUE_CLASS]] = ''
-
-
-def get_issues_types(issue_column_name: str,
-                     submissions_with_issues_path: str,
-                     issues_path: str):
+def get_issues_classes(issue_column_name: str,
+                       issue_class_column_name: str,
+                       issue_type_column_name: str,
+                       submissions_with_issues_path: str,
+                       issues_path: str):
     df_submissions = read_df(submissions_with_issues_path)
     issues_types = {}
-    df_submissions[issue_column_name].apply(lambda d: get_raw_issues(d, issues_types))
+    df_submissions[issue_column_name].apply(
+        lambda d: get_issues(d, issue_class_column_name, issue_type_column_name, issues_types))
 
     write_df(pd.DataFrame.from_dict({
         IssuesColumns.CLASS: issues_types.keys(),
@@ -75,28 +74,33 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--get-issues', '-gi', type=str, help='path to submissions series', default=False)
+    parser.add_argument('--issues-type', '-t', type=str, help='type of issues to analyse',
+                        choices=[SubmissionColumns.RAW_ISSUES, SubmissionColumns.QODANA_ISSUES])
+    parser.add_argument('--get-issues', '-i', type=str, help='path to submissions series', default=False)
     parser.add_argument('--submissions-series-path', '-sp', type=str, help='path to submissions series', required=True)
-    parser.add_argument('--raw-issues-path', '-rp', type=str, help='path to raw issues info', required=True)
-    parser.add_argument('--qodana-issues-path', '-qp', type=str, help='path to qodana issues info', required=True)
-    parser.add_argument('--raw-issues-result-path', '-rrp', type=str, help='path to raw issues result', required=True)
-    parser.add_argument('--qodana-issues-result-path', '-qrp', type=str, help='path to qodana issues result',
-                        required=True)
+    parser.add_argument('--issues-path', '-p', type=str, help='path to issues info', required=True)
+    parser.add_argument('--issues-result-path', '-r', type=str, help='path to issues result', required=True)
 
     args = parser.parse_args(sys.argv[1:])
-    if args.get_issues:
-        get_issues_types(SubmissionColumns.RAW_ISSUES,
-                         args.submissions_series_path,
-                         args.raw_issues_path)
-        get_issues_types(SubmissionColumns.QODANA_ISSUES,
-                         args.submissions_series_path,
-                         args.qodana_issues_path)
 
-    get_solutions_with_issues_detailed(SubmissionColumns.RAW_ISSUES, SubmissionColumns.RAW_ISSUE_CLASS,
+    issues_type = SubmissionColumns(args.issues_type)
+    if issues_type == SubmissionColumns.QODANA_ISSUES:
+        issue_class_column_name = SubmissionColumns.QODANA_ISSUE_CLASS
+        issue_type_column_name = SubmissionColumns.QODANA_ISSUE_TYPE
+    else:
+        issue_class_column_name = SubmissionColumns.RAW_ISSUE_CLASS
+        issue_type_column_name = SubmissionColumns.RAW_ISSUE_TYPE
+
+    if args.get_issues:
+        logging.info("Getting issue classes")
+        get_issues_classes(issues_type,
+                           issue_class_column_name,
+                           issue_type_column_name,
+                           args.submissions_series_path,
+                           args.issues_path)
+
+    logging.info("Getting issue default info")
+    get_solutions_with_issues_detailed(issues_type, issue_class_column_name,
                                        args.submissions_series_path,
                                        args.raw_issues_path,
                                        args.qodana_issues_path)
-    get_solutions_with_issues_detailed(SubmissionColumns.QODANA_ISSUES, SubmissionColumns.QODANA_ISSUE_CLASS,
-                                       args.submissions_series_path,
-                                       args.raw_issues_result_path,
-                                       args.qodana_issues_result_path)
