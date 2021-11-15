@@ -57,6 +57,11 @@ class IssuesColumns(str, Enum):
     TYPE = 'type'
 
 
+class Client(str, Enum):
+    WEB = 'web'
+    IDEA = 'idea'
+
+
 class UserColumns(str, Enum):
     ID = 'id'
     COMMENTS = 'comments_posted'
