@@ -90,6 +90,7 @@ if __name__ == '__main__':
     parser.add_argument('--issues-type', '-t', type=str, help='type of issues to analyse',
                         choices=[SubmissionColumns.RAW_ISSUES, SubmissionColumns.QODANA_ISSUES])
     parser.add_argument('--get-issues', '-i', type=str, help='path to submissions series', default=False)
+    parser.add_argument('--chunk-size', '-s', type=int, help='path to submissions series', default=50000)
     parser.add_argument('--submissions-series-path', '-sp', type=str, help='path to submissions series', required=True)
     parser.add_argument('--issues-path', '-p', type=str, help='path to issues info', required=True)
     parser.add_argument('--issues-result-path', '-r', type=str, help='path to issues result', required=True)
@@ -114,4 +115,5 @@ if __name__ == '__main__':
     get_solutions_with_issues_detailed(issues_type, issue_class_column_name,
                                        args.submissions_series_path,
                                        args.issues_path,
-                                       args.issues_result_path)
+                                       args.issues_result_path,
+                                       args.chunk_size)
