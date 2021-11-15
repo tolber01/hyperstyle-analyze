@@ -93,14 +93,12 @@ if __name__ == '__main__':
 
     if args.get_issues:
         logging.info("Getting issue classes")
-        get_issues_classes(issues_type,
-                           issue_class_column_name,
-                           issue_type_column_name,
+        get_issues_classes(issues_type, issue_class_column_name, issue_type_column_name,
                            args.submissions_series_path,
                            args.issues_path)
 
     logging.info("Getting issue default info")
     get_solutions_with_issues_detailed(issues_type, issue_class_column_name,
                                        args.submissions_series_path,
-                                       args.raw_issues_path,
-                                       args.qodana_issues_path)
+                                       args.issues_path,
+                                       args.issues_result_path)
