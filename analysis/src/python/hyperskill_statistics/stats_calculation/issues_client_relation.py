@@ -31,11 +31,11 @@ def issues_to_client(issues_path: str,
     df_issues_result = read_df(issues_result_path)
 
     for i, issues_series in df_issues_result.iterrows():
-        for c in df_issues_result.columns:
-            try:
+        try:
+            for c in df_issues_result.columns:
                 issues_series[c] = ast.literal_eval(issues_series[c])
-            except Exception as e:
-                continue
+        except Exception as e:
+            continue
 
         n = len(issues_series[SubmissionColumns.TIME])
         for j in range(n):
