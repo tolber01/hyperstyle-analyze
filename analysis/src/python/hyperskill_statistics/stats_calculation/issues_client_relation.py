@@ -40,7 +40,7 @@ def issues_to_client(issues_path: str,
             logging.warning(f"Skipping issues i={i}: {e}")
             continue
 
-        n = len(issues_series[SubmissionColumns.TIME])
+        n = len(issues_series[SubmissionColumns.CLIENT])
         for j in range(n):
             client = Client.WEB if Client.WEB == issues_series[SubmissionColumns.CLIENT][j] else Client.IDEA
             if j == n - 1:
