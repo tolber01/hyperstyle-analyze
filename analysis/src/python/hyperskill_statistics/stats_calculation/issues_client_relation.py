@@ -1,5 +1,6 @@
 import argparse
 import ast
+import logging
 import sys
 
 import numpy as np
@@ -32,9 +33,11 @@ def issues_to_client(issues_path: str,
 
     for i, issues_series in df_issues_result.iterrows():
         try:
-            for c in df_issues_result.columns:
-                issues_series[c] = ast.literal_eval(issues_series[c])
+            issues_series[SubmissionColumns.CLIENT] = ast.literal_eval(issues_series[SubmissionColumns.CLIENT])
+            for issue in issues:
+                issues_series[issue] = ast.literal_eval(issues_series[issue])
         except Exception as e:
+            logging.warning(f"Skipping issues i={i}: {e}")
             continue
 
         n = len(issues_series[SubmissionColumns.TIME])
