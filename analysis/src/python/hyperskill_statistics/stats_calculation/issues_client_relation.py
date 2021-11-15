@@ -32,7 +32,10 @@ def issues_to_client(issues_path: str,
 
     for i, issues_series in df_issues_result.iterrows():
         for c in df_issues_result.columns:
-            issues_series[c] = to_list(issues_series[c])
+            try:
+                issues_series[c] = ast.literal_eval(issues_series[c])
+            except Exception as e:
+                continue
 
         for j in range(len(issues_series[SubmissionColumns.TIME])):
             client = Client.WEB if Client.WEB == issues_series[SubmissionColumns.CLIENT][j] else Client.IDEA
