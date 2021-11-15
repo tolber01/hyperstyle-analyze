@@ -1,5 +1,4 @@
-import os
-from typing import List, Dict, Callable
+from typing import Callable, Dict, List
 
 import pandas as pd
 from pandarallel import pandarallel
@@ -40,3 +39,7 @@ def read_df(path: str) -> pd.DataFrame:
 
 def write_df(df: pd.DataFrame, path: str):
     df.to_csv(path, index=False)
+
+
+def append_df(df: pd.DataFrame, path: str):
+    df.to_csv(path, index=False, mode='a', header=False)

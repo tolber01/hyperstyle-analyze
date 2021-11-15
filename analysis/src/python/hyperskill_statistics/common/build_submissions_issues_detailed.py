@@ -6,7 +6,7 @@ from typing import List
 
 import pandas as pd
 
-from analysis.src.python.hyperskill_statistics.common.df_utils import read_df, write_df
+from analysis.src.python.hyperskill_statistics.common.df_utils import append_df, read_df, write_df
 from analysis.src.python.hyperskill_statistics.common.utils import str_to_dict
 from analysis.src.python.hyperskill_statistics.model.column_name import IssuesColumns, SubmissionColumns
 
@@ -62,15 +62,28 @@ def get_solutions_with_issues_detailed(
         issue_class_column_name: str,
         submissions_with_issues_path: str,
         issues_path: str,
-        submissions_issues_path_detailed: str):
+        submissions_issues_path_detailed: str,
+        chunk_size=20000):
     df_submissions_series = read_df(submissions_with_issues_path)
     issues_list = read_df(issues_path)[IssuesColumns.CLASS].values
-    issues_series = df_submissions_series.apply(
-        lambda g: build_issues_series(g, issue_column_name, issue_class_column_name, issues_list), axis=1)
-    write_df(issues_series, submissions_issues_path_detailed)
+
+    size = df_submissions_series.shape[0]
+    logging.info(f"Processing dataframe size={size} chunk_size={chunk_size}")
+    for i in range(0, size // chunk_size + 1):
+        logging.info(f"Processing chunk={i}, slice={(i * chunk_size, (i + 1) * chunk_size)}")
+        issues_series = df_submissions_series[i * chunk_size:(i + 1) * chunk_size].apply(
+            lambda g: build_issues_series(g, issue_column_name, issue_class_column_name, issues_list), axis=1)
+        if i == 0:
+            logging.info(f"Writing chunk {i}")
+            write_df(issues_series, submissions_issues_path_detailed)
+        else:
+            logging.info(f"Appending chunk {i}")
+            append_df(issues_series, submissions_issues_path_detailed)
 
 
 if __name__ == '__main__':
+    log = logging.getLogger()
+    log.setLevel(logging.DEBUG)
 
     parser = argparse.ArgumentParser()
 
