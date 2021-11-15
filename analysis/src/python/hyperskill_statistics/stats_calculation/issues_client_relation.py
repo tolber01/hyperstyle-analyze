@@ -32,7 +32,6 @@ def issues_to_client(issues_path: str,
 
     for i, issues_series in df_issues_result.iterrows():
         for c in df_issues_result.columns:
-            print(f'converting column {c}')
             issues_series[c] = to_list(issues_series[c])
 
         for j in range(len(issues_series[SubmissionColumns.TIME])):
