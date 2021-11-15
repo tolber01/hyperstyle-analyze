@@ -37,9 +37,10 @@ def issues_to_client(issues_path: str,
             except Exception as e:
                 continue
 
-        for j in range(len(issues_series[SubmissionColumns.TIME])):
+        n = len(issues_series[SubmissionColumns.TIME])
+        for j in range(n):
             client = Client.WEB if Client.WEB == issues_series[SubmissionColumns.CLIENT][j] else Client.IDEA
-            if j == 0:
+            if j == n - 1:
                 for issue in issues:
                     made_issues[client][issue] += issues_series[issue][j]
             else:
