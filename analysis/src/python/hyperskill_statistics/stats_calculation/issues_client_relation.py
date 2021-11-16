@@ -56,10 +56,7 @@ def issues_to_client(issues_path: str,
         result['made_' + client] = [made_issues[client][issue] for issue in issues]
         result['stable_' + client] = [stable_issues[client][issue] for issue in issues]
     result_df = pd.DataFrame.from_dict(result)
-    if k == 0:
-        write_df(result_df, issues_to_client_path)
-    else:
-        append_df(result_df, issues_to_client_path)
+    write_df(result_df, issues_to_client_path)
 
 
 if __name__ == '__main__':
