@@ -5,7 +5,7 @@ import sys
 
 import pandas as pd
 
-from analysis.src.python.hyperskill_statistics.common.df_utils import append_df, read_df, write_df
+from analysis.src.python.hyperskill_statistics.common.df_utils import read_df, write_df
 from analysis.src.python.hyperskill_statistics.model.column_name import Client, IssuesColumns, SubmissionColumns
 
 
