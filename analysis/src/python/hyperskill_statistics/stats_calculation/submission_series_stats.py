@@ -13,7 +13,7 @@ from analysis.src.python.hyperskill_statistics.model.column_name import Client, 
 def series_count_statistics(issues_path: str,
                             issues_result_path: str,
                             client_count_path: str,
-                            chunk_size=200):
+                            chunk_size=20000):
     k = 0
     issues = read_df(issues_path)[IssuesColumns.CLASS].values
 
