@@ -47,7 +47,7 @@ def filter_submissions_series(submissions_series: pd.DataFrame, diff_coef: float
     return submissions_series
 
 
-def build_submissions_series(submissions_path: str, output_path: str, diff_coef: float):
+def filter_submissions(submissions_path: str, output_path: str, diff_coef: float):
     df_submissions = pd.read_csv(submissions_path)
     df_submission_series = df_submissions.groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID],
                                                   as_index=False)
@@ -62,12 +62,12 @@ def build_submissions_series(submissions_path: str, output_path: str, diff_coef:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--submissions-path', '-s', type=str, help='path to submissions', required=True)
-    parser.add_argument('--filtered-submissions-path', '-fs', type=str, help='path to filtered submissions',
-                        required=True)
-    parser.add_argument('--diff_coef', '-c', type=float,
-                        help='if code different more in diff_coef, consider this attempt strange',
-                        default=10.0)
+    parser.add_argument('--submissions-path', '-s', type=str, required=True,
+                        help='path to submissions')
+    parser.add_argument('--filtered-submissions-path', '-fs', type=str, required=True,
+                        help='path to filtered submissions')
+    parser.add_argument('--diff_coef', '-c', type=float, default=10.0,
+                        help='if code different more in diff_coef, consider this attempt strange')
 
     args = parser.parse_args(sys.argv[1:])
-    build_submissions_series(args.submissions_path, args.filtered_submissions_path, args.diff_coef)
+    filter_submissions(args.submissions_path, args.filtered_submissions_path, args.diff_coef)
