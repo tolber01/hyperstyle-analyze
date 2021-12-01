@@ -58,6 +58,7 @@ def filter_submissions_series(submissions_series: pd.DataFrame, diff_coef: float
 def build_submission_series(submissions_path: str, output_path: str, diff_coef: float):
     df_submissions = pd.read_csv(submissions_path)
     df_submissions['group'] = df_submissions.groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID]).ngroup()
+    df_submissions = df_submissions.reset_index(drop=True)
 
     df_submission_series = df_submissions.groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID],
                                                   as_index=False)
