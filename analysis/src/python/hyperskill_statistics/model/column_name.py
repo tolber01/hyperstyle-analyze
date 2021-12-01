@@ -37,6 +37,10 @@ class TopicColumns(str, Enum):
 class SubmissionColumns(str, Enum):
     ID = 'id'
     USER_ID = 'user_id'
+    GROUP = 'group'
+    ATTEMPT = 'attempt'
+    LAST_ATTEMPT = 'last_attempt'
+    BASE_CLIENT = 'base_client'
     CLIENT = 'client'
     STEP_ID = 'step_id'
     CODE = 'code'
@@ -50,6 +54,17 @@ class SubmissionColumns(str, Enum):
     QODANA_ISSUES = 'qodana_issues'
     QODANA_ISSUE_CLASS = 'problem_id'
     QODANA_ISSUE_TYPE = 'type'
+
+
+class SubmissionColumnsStats(str, Enum):
+    ATTEMPTS = 'attempts'
+    RAW_ISSUE_COUNT = 'raw_issues_count'
+    QODANA_ISSUE_COUNT = 'qodana_issues_count'
+    CODE_ROWS_COUNT = 'code_rows_count'
+    CODE_SYMBOLS_COUNT = 'code_symbols_count'
+
+    FIRST_SUFFIX = '_first'
+    LAST_SUFFIX = '_last'
 
 
 class IssuesColumns(str, Enum):

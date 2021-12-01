@@ -27,8 +27,8 @@ def drop_columns(df: pd.DataFrame, columns: List[str]) -> pd.DataFrame:
     return df.drop(labels=columns, axis=1)
 
 
-def merge_dfs(df_left: pd.DataFrame, df_right: pd.DataFrame, left_on: str, right_on: str) -> pd.DataFrame:
-    df_merged = pd.merge(df_left, df_right, left_on=left_on, right_on=right_on, suffixes=('', '_extra'))
+def merge_dfs(df_left: pd.DataFrame, df_right: pd.DataFrame, left_on: str, right_on: str, how='inner') -> pd.DataFrame:
+    df_merged = pd.merge(df_left, df_right, how=how, left_on=left_on, right_on=right_on, suffixes=('', '_extra'))
     df_merged.drop(df_merged.filter(regex='_extra$').columns.tolist(), axis=1, inplace=True)
     return df_merged
 

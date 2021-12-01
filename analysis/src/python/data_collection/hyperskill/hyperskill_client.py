@@ -1,17 +1,17 @@
 import os
-from typing import List, Optional, Callable, Dict
+from typing import Callable, Dict, List, Optional
 
 from analysis.src.python.data_collection.api.platform_client import PlatformClient
-from analysis.src.python.data_collection.api.platform_objects import Object, BaseRequestParams
-from analysis.src.python.data_collection.hyperskill.api.projects import ProjectsResponse, Project
+from analysis.src.python.data_collection.api.platform_objects import BaseRequestParams, Object
+from analysis.src.python.data_collection.hyperskill.api.projects import Project, ProjectsResponse
 from analysis.src.python.data_collection.hyperskill.api.search_results import \
     SearchResult, SearchResultsRequestParams, SearchResultsResponse
-from analysis.src.python.data_collection.hyperskill.api.steps import StepsResponse, StepsRequestParams
-from analysis.src.python.data_collection.hyperskill.api.submissions import SubmissionResponse, SubmissionRequestParams, \
-    Submission
-from analysis.src.python.data_collection.hyperskill.api.topics import TopicsResponse, Topic
-from analysis.src.python.data_collection.hyperskill.api.tracks import TracksResponse, Track
-from analysis.src.python.data_collection.hyperskill.api.users import UserResponse, User
+from analysis.src.python.data_collection.hyperskill.api.steps import StepsRequestParams, StepsResponse
+from analysis.src.python.data_collection.hyperskill.api.submissions import Submission, SubmissionRequestParams, \
+    SubmissionResponse
+from analysis.src.python.data_collection.hyperskill.api.topics import Topic, TopicsResponse
+from analysis.src.python.data_collection.hyperskill.api.tracks import Track, TracksResponse
+from analysis.src.python.data_collection.hyperskill.api.users import User, UserResponse
 from analysis.src.python.data_collection.hyperskill.hyperskill_objects import HyperskillPlatform, ObjectClass
 
 
@@ -55,7 +55,7 @@ class HyperskillClient(PlatformClient):
 
     def get_topics(self, ids: Optional[List[int]] = None, count: Optional[int] = None) -> List[Topic]:
         return self._get_objects(ObjectClass.TOPIC, TopicsResponse,
-                                 BaseRequestParams(ids=ids), count=count)
+                                 BaseRequestParams(ids=",".join(map(str, ids))), count=count)
 
     def get_projects(self, ids: Optional[List[int]] = None, count: Optional[int] = None) -> List[Project]:
         return self._get_objects(ObjectClass.PROJECT, ProjectsResponse,

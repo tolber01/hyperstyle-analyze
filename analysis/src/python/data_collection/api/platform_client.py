@@ -95,7 +95,7 @@ class PlatformClient:
             api_url = '{}/{}'.format(api_url, obj_id)
         if params is not None:
             dict_params = {k: v for k, v in asdict(params).items() if v is not None}
-            api_url = '{}?{}'.format(api_url, urllib.parse.urlencode(dict_params))
+            api_url = '{}?ids={}'.format(api_url, params.ids)
         if self.token is not None:
             raw_response = requests.get(api_url, headers={'Authorization': 'Token ' + self.token}, timeout=None)
         else:
