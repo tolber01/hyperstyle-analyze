@@ -15,4 +15,4 @@ def preprocess_submissions(submissions_path: str):
 
 
 if __name__ == '__main__':
-    preprocess_submissions('../data/java/submissions_with_series_java11.csv')
+    preprocess_submissions('../data/python/solutions_python_with_issues.csv')
