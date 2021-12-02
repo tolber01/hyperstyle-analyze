@@ -32,4 +32,4 @@ def preprocess_steps(steps_path: str, topics_path: str):
 
 
 if __name__ == '__main__':
-    preprocess_steps('../data/java/client/steps.csv', '../../data/java/client/topics.csv')
+    preprocess_steps('../data/python/steps.csv', '../data/python/topics.csv')

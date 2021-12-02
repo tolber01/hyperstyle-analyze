@@ -1,11 +1,10 @@
 import datetime
 import logging
-import urllib
 from dataclasses import asdict
-from typing import List, Type, Optional, TypeVar
+from typing import Dict, List, Optional, Type, TypeVar
 
 import requests
-from dacite import from_dict, Config
+from dacite import Config, from_dict
 
 from analysis.src.python.data_collection.api.platform_objects import BaseRequestParams, Object, ObjectResponse
 from analysis.src.python.data_collection.api.utlis import str_to_datetime
@@ -84,6 +83,16 @@ class PlatformClient:
 
         return objects
 
+    def _prepare_params(self, params: BaseRequestParams) -> Dict:
+        dict_params = {}
+        for k, v in asdict(params).items():
+            if v is None:
+                continue
+            if isinstance(v, list):
+                v = ','.join(map(str, v))
+            dict_params[k] = v
+        return dict_params
+
     def _fetch(self,
                obj_class: str,
                params: BaseRequestParams,
@@ -97,7 +106,8 @@ class PlatformClient:
             dict_params = {k: v for k, v in asdict(params).items() if v is not None}
             api_url = '{}?ids={}'.format(api_url, params.ids)
         if self.token is not None:
-            raw_response = requests.get(api_url, headers={'Authorization': 'Token ' + self.token}, timeout=None)
+            raw_response = requests.get(api_url, headers={'Authorization': 'Token ' + self.token},
+                                        params=dict_params, timeout=None)
         else:
             raw_response = requests.get(api_url, timeout=None)
 

@@ -16,8 +16,11 @@ def check_same_code(submission_0: pd.Series, submission_1: pd.Series) -> bool:
 
 # check if submission not so different with previous
 def check_different_code(submission_0: pd.Series, submission_1: pd.Series, diff_coef: float) -> bool:
-    code_lines_diff = len(submission_0[SubmissionColumns.CODE]) / \
-                      len(submission_1[SubmissionColumns.CODE])
+    code_0 = submission_0[SubmissionColumns.CODE]
+    code_1 = submission_1[SubmissionColumns.CODE]
+    if not isinstance(str, code_0) and not isinstance(str, code_1):
+        return code_0 == code_1
+    code_lines_diff = len(code_0) / len(code_1)
     return not (1 / diff_coef <= code_lines_diff <= diff_coef)
 
 
@@ -33,15 +36,15 @@ def filter_submissions_series(submissions_series: pd.DataFrame, diff_coef: float
         submission_1 = submissions_series.iloc[i - 1]
         if check_same_code(submission_0, submission_1):
             logging.info(f'drop submission: '
-                         f'user={submissions_series.iloc[i][SubmissionColumns.USER_ID]} '
-                         f'step={submissions_series.iloc[i][SubmissionColumns.STEP_ID]} '
+                         f'user={submission_0[SubmissionColumns.USER_ID]} '
+                         f'step={submission_0[SubmissionColumns.STEP_ID]} '
                          f'attempt={i + 1}: '
                          f'same submissions')
             submissions_series.drop(submissions_series.iloc[i].name, inplace=True, axis=0)
         elif check_different_code(submission_0, submission_1, diff_coef):
             logging.info(f'drop submission: '
-                         f'user={submissions_series.iloc[i][SubmissionColumns.USER_ID]} '
-                         f'step={submissions_series.iloc[i][SubmissionColumns.STEP_ID]} '
+                         f'user={submission_0[SubmissionColumns.USER_ID]} '
+                         f'step={submission_0[SubmissionColumns.STEP_ID]} '
                          f'attempt={i + 1}: '
                          f'different submissions')
             submissions_series.drop(submissions_series.iloc[i].name, inplace=True, axis=0)
@@ -57,11 +60,10 @@ def filter_submissions_series(submissions_series: pd.DataFrame, diff_coef: float
 
 def build_submission_series(submissions_path: str, output_path: str, diff_coef: float):
     df_submissions = pd.read_csv(submissions_path)
-    df_submissions['group'] = df_submissions.groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID]).ngroup()
-    df_submissions = df_submissions.reset_index(drop=True)
+    df_submissions[SubmissionColumns.GROUP] = df_submissions \
+        .groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID]).ngroup()
 
-    df_submission_series = df_submissions.groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID],
-                                                  as_index=False)
+    df_submission_series = df_submissions.groupby([SubmissionColumns.GROUP], as_index=False)
     logging.info('finish grouping')
     df_filtered_submission_series = df_submission_series.apply(lambda g: filter_submissions_series(g, diff_coef))
     logging.info('finish filtering')
@@ -85,7 +87,3 @@ if __name__ == '__main__':
 
     args = parser.parse_args(sys.argv[1:])
     build_submission_series(args.submissions_path, args.output_path, args.diff_coef)
-
-# python3  analysis/src/python/hyperskill_statistics/common/filter_submissions.py
-# -s analysis/src/python/hyperskill_statistics/data/java/submissions_with_issues_java11.csv
-# -o analysis/src/python/hyperskill_statistics/data/java/submissions_filtered_with_issues_java11.csv

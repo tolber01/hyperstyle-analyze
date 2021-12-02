@@ -46,11 +46,17 @@ class HyperskillClient(PlatformClient):
                   count: Optional[int] = None,
                   topic_ids: Optional[List[int]] = None):
         steps = []
-        topic_ids = topic_ids if topic_ids is not None else [topic.id for topic in self.get_topics()]
-        for topic_id in topic_ids:
-            steps += self._get_objects(ObjectClass.STEP, StepsResponse, StepsRequestParams(ids=ids, topic=topic_id))
-            if count is not None and len(steps) >= count:
-                return steps[:count]
+        if ids is not None:
+            chunk_size = 100
+            ids_chunks = [ids[pos:pos + chunk_size] for pos in range(0, len(ids), chunk_size)]
+            for ids_chunk in ids_chunks:
+                steps += self._get_objects(ObjectClass.STEP, StepsResponse, StepsRequestParams(ids=ids_chunk))
+        else:
+            topic_ids = topic_ids if topic_ids is not None else [topic.id for topic in self.get_topics()]
+            for topic_id in topic_ids:
+                steps += self._get_objects(ObjectClass.STEP, StepsResponse, StepsRequestParams(ids=ids, topic=topic_id))
+                if count is not None and len(steps) >= count:
+                    return steps[:count]
         return steps
 
     def get_topics(self, ids: Optional[List[int]] = None, count: Optional[int] = None) -> List[Topic]:

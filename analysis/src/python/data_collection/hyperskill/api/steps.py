@@ -43,7 +43,7 @@ class LikesStatistics:
 @dataclass
 class Step(Object):
     block: Block
-    bloom_level: int
+    bloom_level: Optional[int]
     can_abandon: bool
     can_skip: bool
     check_profile: str

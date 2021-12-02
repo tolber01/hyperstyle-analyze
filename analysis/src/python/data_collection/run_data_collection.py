@@ -44,7 +44,9 @@ if __name__ == '__main__':
     client = platform_client[platform]()
     if args.ids is not None:
         ids = args.ids
+    elif args.ids_from_file is not None:
+        ids = list(pd.read_csv(args.ids_from_file)[args.ids_from_column].unique())
     else:
-        ids = list(pd.read_csv(args.ids_from_file)[args.ids_from_column].unique().values)
+        ids = None
     objects = client.get_objects(args.object, ids, args.count)
     save_objects_to_csv(args.output, objects, args.object)
