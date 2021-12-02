@@ -18,8 +18,6 @@ def check_same_code(submission_0: pd.Series, submission_1: pd.Series) -> bool:
 def check_different_code(submission_0: pd.Series, submission_1: pd.Series, diff_coef: float) -> bool:
     code_0 = submission_0[SubmissionColumns.CODE]
     code_1 = submission_1[SubmissionColumns.CODE]
-    if not isinstance(code_0, str) and not isinstance(code_1, str):
-        return code_0 == code_1
     code_lines_diff = len(code_0) / len(code_1)
     return not (1 / diff_coef <= code_lines_diff <= diff_coef)
 
@@ -60,6 +58,7 @@ def filter_submissions_series(submissions_series: pd.DataFrame, diff_coef: float
 
 def build_submission_series(submissions_path: str, output_path: str, diff_coef: float):
     df_submissions = pd.read_csv(submissions_path)
+    df_submissions = df_submissions[df_submissions[SubmissionColumns.CODE].apply(lambda x: isinstance(x, str))]
     df_submissions[SubmissionColumns.GROUP] = df_submissions \
         .groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID]).ngroup()
 
