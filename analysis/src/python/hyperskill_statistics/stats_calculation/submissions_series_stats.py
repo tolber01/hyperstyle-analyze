@@ -1,54 +1,49 @@
+import json
+import logging
+
 import pandas as pd
 
-from analysis.src.python.hyperskill_statistics.common.df_utils import read_df, write_df
-from analysis.src.python.hyperskill_statistics.common.utils import str_to_datetime
-from analysis.src.python.hyperskill_statistics.model.column_name import SubmissionColumns, SubmissionColumnsStats
-from analysis.src.python.hyperskill_statistics.stats_calculation.stats_utils import calc_code_rows_count, \
-    calc_code_symbols_count, calc_issues_count
+from analysis.src.python.hyperskill_statistics.common.df_utils import append_df, read_df, write_df
+from analysis.src.python.hyperskill_statistics.model.column_name import SubmissionColumns
 
 
-def calc_submission_stats(submission: pd.Series) -> pd.Series:
-    submission_stats = submission[[SubmissionColumns.TIME]].copy()
+def calc_submissions_client_series(series: pd.DataFrame) -> pd.Series:
+    series = series.sort_values([SubmissionColumns.ATTEMPT])
+    stats = {
+        SubmissionColumns.GROUP: series[SubmissionColumns.GROUP].values[0],
+        SubmissionColumns.CLIENT: json.dumps(list(series[SubmissionColumns.CLIENT].values))
+    }
 
-    submission_stats[SubmissionColumnsStats.CODE_ROWS_COUNT] = calc_code_rows_count(
-        submission[SubmissionColumns.CODE])
-    submission_stats[SubmissionColumnsStats.CODE_SYMBOLS_COUNT] = calc_code_symbols_count(
-        submission[SubmissionColumns.CODE])
-
-    submission_stats[SubmissionColumnsStats.QODANA_ISSUE_COUNT] = calc_issues_count(
-        submission[SubmissionColumns.QODANA_ISSUES])
-    submission_stats[SubmissionColumnsStats.RAW_ISSUE_COUNT] = calc_issues_count(
-        submission[SubmissionColumns.RAW_ISSUES])
-    return submission_stats
+    return pd.Series(stats)
 
 
-def calc_submissions_series_stats(submissions: pd.DataFrame) -> pd.Series:
-    submissions[SubmissionColumns.TIME] = submissions[SubmissionColumns.TIME].apply(str_to_datetime)
-    submissions.sort_values([SubmissionColumns.ATTEMPT], inplace=True)
+def get_submission_statistics(submissions_with_issues_path: str,
+                              output_path: str,
+                              chunk_size: int):
+    df_submissions = pd.read_csv(submissions_with_issues_path)
 
-    first_submission_stats = calc_submission_stats(submissions.iloc[0])
-    last_submission_stats = calc_submission_stats(submissions.iloc[-1])
-    stats = submissions[[SubmissionColumns.GROUP, SubmissionColumns.ATTEMPTS]].iloc[0].copy()
-    stats[SubmissionColumns.TIME] = (last_submission_stats[SubmissionColumns.TIME] -
-                                     first_submission_stats[SubmissionColumns.TIME]).total_seconds()
-    stats = stats.astype('int64')
-    stats[SubmissionColumns.CLIENT] = submissions[[SubmissionColumns.CLIENT]] \
-        .agg(list)[SubmissionColumns.CLIENT].values
-    stats = pd.concat([stats,
-                       first_submission_stats.add_suffix(SubmissionColumnsStats.FIRST_SUFFIX),
-                       last_submission_stats.add_suffix(SubmissionColumnsStats.LAST_SUFFIX)], axis=0)
-    return stats
+    min_group, max_group = df_submissions[SubmissionColumns.GROUP].min(), df_submissions[SubmissionColumns.GROUP].max()
+    logging.info(f'groups range: [{min_group}, {max_group}]')
 
-
-def get_submission_statistics(submissions_with_issues_path: str, submissions_statistics_path: str):
-    df_submissions = read_df(submissions_with_issues_path)
-
-    df_submissions_series_stats = df_submissions.groupby([SubmissionColumns.GROUP]) \
-        .apply(calc_submissions_series_stats)
-
-    write_df(df_submissions_series_stats, submissions_statistics_path)
+    for i in range(min_group, max_group + 1, chunk_size):
+        logging.info(f'processing groups: [{i}, {i + chunk_size})')
+        df_filtered_submission_series = df_submissions[(df_submissions[SubmissionColumns.GROUP] >= i) &
+                                                       (df_submissions[SubmissionColumns.GROUP] < i + chunk_size)]
+        df_grouped_submission_series = df_filtered_submission_series.groupby([SubmissionColumns.GROUP], as_index=False)
+        logging.info('finish grouping')
+        df_client_series = df_grouped_submission_series.apply(calc_submissions_client_series)
+        logging.info('finish filtering')
+        df_client_series = df_client_series.reset_index(drop=True)
+        logging.info('finish aggregation')
+        if i == 0:
+            write_df(df_client_series, output_path)
+        else:
+            append_df(df_client_series, output_path)
 
 
 if __name__ == '__main__':
-    get_submission_statistics('../data/java/filtered_submissions_with_issues_java11.csv',
-                              '../data/java/filtered_submissions_series_stats_java11.csv')
+    log = logging.getLogger()
+    log.setLevel(logging.DEBUG)
+    get_submission_statistics('../data/python/result_solutions_python_with_series_full.csv',
+                              '../data/python/result_submissions_client_stats_python.csv',
+                              50000)

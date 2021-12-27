@@ -10,7 +10,7 @@ from analysis.src.python.hyperskill_statistics.model.column_name import IssuesCo
 
 def get_issues(issues, issue_class_column_name: str, issue_type_column_name: str, issues_types):
     for issue in str_to_dict(issues):
-        issues_types[issue[issue_type_column_name]] = issue.get(issue_class_column_name, '')
+        issues_types[issue[issue_class_column_name]] = issue.get(issue_type_column_name, '')
 
 
 def get_issues_classes(issue_column_name: str,
@@ -52,5 +52,5 @@ if __name__ == '__main__':
     get_issues_classes(issues_type,
                        issue_class_column_name,
                        issue_type_column_name,
-                       args.submissions_series_path,
+                       args.submissions_path,
                        args.issues_path)

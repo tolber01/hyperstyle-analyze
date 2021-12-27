@@ -4,7 +4,7 @@ import sys
 
 import pandas as pd
 
-from analysis.src.python.hyperskill_statistics.common.df_utils import write_df
+from analysis.src.python.hyperskill_statistics.common.df_utils import append_df, write_df
 from analysis.src.python.hyperskill_statistics.common.utils import str_to_datetime
 from analysis.src.python.hyperskill_statistics.model.column_name import SubmissionColumns
 
@@ -23,9 +23,10 @@ def check_different_code(submission_0: pd.Series, submission_1: pd.Series, diff_
 
 
 def filter_submissions_series(submissions_series: pd.DataFrame, diff_coef: float) -> pd.DataFrame:
+    log.info(submissions_series.iloc[0][SubmissionColumns.GROUP])
     submissions_series = submissions_series.copy()
-    submissions_series['time'] = submissions_series['time'].apply(str_to_datetime)
-    submissions_series.sort_values(['time'], inplace=True)
+    submissions_series[SubmissionColumns.TIME] = submissions_series[SubmissionColumns.TIME].apply(str_to_datetime)
+    submissions_series.sort_values([SubmissionColumns.TIME], inplace=True)
 
     i = 1
     while i < submissions_series.shape[0]:
@@ -56,24 +57,36 @@ def filter_submissions_series(submissions_series: pd.DataFrame, diff_coef: float
     return submissions_series
 
 
-def build_submission_series(submissions_path: str, output_path: str, diff_coef: float):
+def build_submission_series(submissions_path: str, output_path: str, diff_coef: float, chunk_size: int = 50000):
     df_submissions = pd.read_csv(submissions_path)
     df_submissions = df_submissions[df_submissions[SubmissionColumns.CODE].apply(lambda x: isinstance(x, str))]
     df_submissions[SubmissionColumns.GROUP] = df_submissions \
         .groupby([SubmissionColumns.USER_ID, SubmissionColumns.STEP_ID]).ngroup()
 
-    df_submission_series = df_submissions.groupby([SubmissionColumns.GROUP], as_index=False)
-    logging.info('finish grouping')
-    df_filtered_submission_series = df_submission_series.apply(lambda g: filter_submissions_series(g, diff_coef))
-    logging.info('finish filtering')
-    df_filtered_submission = df_filtered_submission_series.reset_index(drop=True)
-    logging.info('finish aggregation')
-    write_df(df_filtered_submission, output_path)
+    min_group, max_group = df_submissions[SubmissionColumns.GROUP].min(), df_submissions[SubmissionColumns.GROUP].max()
+    logging.info(f'groups range: [{min_group}, {max_group}]')
+
+    for i in range(min_group, max_group + 1, chunk_size):
+        logging.info(f'processing groups: [{i}, {i + chunk_size})')
+        df_grouped_submission_series = \
+            df_submissions[(df_submissions[SubmissionColumns.GROUP] >= i) &
+                           (df_submissions[SubmissionColumns.GROUP] < i + chunk_size)] \
+                .groupby([SubmissionColumns.GROUP], as_index=False)
+        logging.info('finish grouping')
+        df_filtered_submission_series = df_grouped_submission_series \
+            .apply(lambda g: filter_submissions_series(g, diff_coef))
+        logging.info('finish filtering')
+        df_filtered_submission = df_filtered_submission_series.reset_index(drop=True)
+        logging.info('finish aggregation')
+        if i == 0:
+            write_df(df_filtered_submission, output_path)
+        else:
+            append_df(df_filtered_submission, output_path)
 
 
 if __name__ == '__main__':
-    # log = logging.getLogger()
-    # log.setLevel(logging.DEBUG)
+    log = logging.getLogger()
+    log.setLevel(logging.DEBUG)
 
     parser = argparse.ArgumentParser()
 
