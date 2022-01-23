@@ -22,13 +22,9 @@ def get_requires() -> List[str]:
 
 
 setup(
-    name='hyperstyle_analysis',
     version=get_version(),
-    description='A set of analysis utilities for the Hyperstyle project.',
     long_description=get_long_description(),
     long_description_content_type='text/markdown',
-    url='https://github.com/hyperskill/hyperstyle-analyze',
-    author='Stepik.org',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
