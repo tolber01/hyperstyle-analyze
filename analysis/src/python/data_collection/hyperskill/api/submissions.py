@@ -40,8 +40,8 @@ class Error:
     line_number: int
     column_number: int
     category: str
-    difficulty: str
-    influence_on_penalty: int
+    difficulty: Optional[str] = None
+    influence_on_penalty: Optional[int] = None
 
 
 @dataclass(frozen=True)

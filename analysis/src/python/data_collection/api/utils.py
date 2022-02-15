@@ -9,5 +9,8 @@ def str_to_datetime(date_string: Optional[str]) -> Optional[datetime.datetime]:
     try:
         timestamp = datetime.datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%S.%fZ')
     except ValueError:
-        timestamp = datetime.datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+        try:
+            timestamp = datetime.datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+        except ValueError:
+            timestamp = datetime.datetime.fromisoformat(date_string)
     return timestamp
